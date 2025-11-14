@@ -1,0 +1,35 @@
+=== YOLOv11 訓練啟動於 20251113_162309 ===
+
+Traceback (most recent call last):
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\engine\trainer.py", line 649, in get_dataset
+    data = check_det_dataset(self.args.data)
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\data\utils.py", line 400, in check_det_dataset
+    file = check_file(dataset)
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\utils\checks.py", line 580, in check_file
+    raise FileNotFoundError(f"'{file}' does not exist")
+FileNotFoundError: 'docs\en\datasets\pose\coco8-pose.yaml' does not exist
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+<unknown>:2: SyntaxWarning: invalid escape sequence '\e'
+<unknown>:1: SyntaxWarning: invalid escape sequence '\e'
+  File "c:\Users\CiRou\Dev\ultralytics-main\Yolov11_1113\test_1113.py", line 43, in <module>
+    results = model.train(data="docs\en\datasets\pose\coco8-pose.yaml", epochs=100, imgsz=640,project="runs/pose",name="my_custom_train",device='cpu')
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\engine\model.py", line 773, in train
+    self.trainer = (trainer or self._smart_load("trainer"))(overrides=args, _callbacks=self.callbacks)
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\models\yolo\pose\train.py", line 55, in __init__
+    super().__init__(cfg, overrides, _callbacks)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\models\yolo\detect\train.py", line 63, in __init__
+    super().__init__(cfg, overrides, _callbacks)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\engine\trainer.py", line 163, in __init__
+    self.data = self.get_dataset()
+                ~~~~~~~~~~~~~~~~^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\models\yolo\pose\train.py", line 113, in get_dataset
+    data = super().get_dataset()
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\engine\trainer.py", line 653, in get_dataset
+    raise RuntimeError(emojis(f"Dataset '{clean_url(self.args.data)}' error ❌ {e}")) from e
+RuntimeError: Dataset 'docs/en/datasets/pose/coco8-pose.yaml' error  'docs\en\datasets\pose\coco8-pose.yaml' does not exist

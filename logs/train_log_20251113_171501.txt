@@ -1,0 +1,46 @@
+=== YOLOv11 訓練啟動於 20251113_171501 ===
+
+[KDownloading https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n.pt to 'yolo11n.pt': 2% ──────────── 96.0KB/5.4MB 189.3KB/s 0.2s<28.5s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n.pt to 'yolo11n.pt': 5% ╸─────────── 288.0KB/5.4MB 1.9MB/s 0.3s<2.7s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n.pt to 'yolo11n.pt': 12% ━─────────── 664.0KB/5.4MB 3.7MB/s 0.4s<1.3s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n.pt to 'yolo11n.pt': 23% ━━╸───────── 1.2/5.4MB 5.6MB/s 0.5s<0.7s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n.pt to 'yolo11n.pt': 37% ━━━━──────── 2.0/5.4MB 7.6MB/s 0.6s<0.4s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n.pt to 'yolo11n.pt': 45% ━━━━━─────── 2.4/5.4MB 3.8MB/s 0.7s<0.8s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n.pt to 'yolo11n.pt': 57% ━━━━━━╸───── 3.0/5.4MB 6.1MB/s 0.8s<0.4s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n.pt to 'yolo11n.pt': 70% ━━━━━━━━──── 3.8/5.4MB 7.1MB/s 0.9s<0.2s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n.pt to 'yolo11n.pt': 85% ━━━━━━━━━━── 4.6/5.4MB 8.1MB/s 1.0s<0.1s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n.pt to 'yolo11n.pt': 94% ━━━━━━━━━━━─ 5.0/5.4MB 4.5MB/s 1.1s<0.1s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n.pt to 'yolo11n.pt': 100% ━━━━━━━━━━━━ 5.4MB 4.8MB/s 1.1s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n.pt to 'yolo11n.pt': 100% ━━━━━━━━━━━━ 5.4MB 4.8MB/s 1.1s
+[K[34m[1mtrain: [0mScanning C:\Users\CiRou\Downloads\ultralytics-main\datasets\coco8-pose\labels\train.cache... 4 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 4/4 1.1Mit/s 0.0s[K[34m[1mtrain: [0mScanning C:\Users\CiRou\Downloads\ultralytics-main\datasets\coco8-pose\labels\train.cache... 4 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 4/4 30.5Kit/s 0.0s
+[K[34m[1mval: [0mScanning C:\Users\CiRou\Downloads\ultralytics-main\datasets\coco8-pose\labels\val.cache... 4 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 4/4 1.3Mit/s 0.0s[K[34m[1mval: [0mScanning C:\Users\CiRou\Downloads\ultralytics-main\datasets\coco8-pose\labels\val.cache... 4 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 4/4 20.2Kit/s 0.0s
+[K: 0% ──────────── 0/1  10.0s
+Traceback (most recent call last):
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\torch\utils\data\dataloader.py", line 1284, in _try_get_data
+    data = self._data_queue.get(timeout=timeout)
+  File "C:\Python313\Lib\queue.py", line 212, in get
+    raise Empty
+_queue.Empty
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\CiRou\Dev\ultralytics-main\Yolov11_1113\test_1113.py", line 47, in <module>
+    results = model.train(data="coco8-pose.yaml", epochs=100, imgsz=640,project="runs/pose",name="my_custom_train",device=-1)
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\engine\model.py", line 778, in train
+    self.trainer.train()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\engine\trainer.py", line 243, in train
+    self._do_train()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\engine\trainer.py", line 404, in _do_train
+    for i, batch in pbar:
+                    ^^^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\utils\tqdm.py", line 351, in __iter__
+    for item in self.iterable:
+                ^^^^^^^^^^^^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\data\build.py", line 76, in __iter__
+    yield next(self.iterator)
+          ~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\torch\utils\data\dataloader.py", line 733, in __next__
+    data = self._next_data()
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\torch\utils\data\dataloader.py", line 1491, in _next_data
+    idx, data = self._get_data()
+                ~~~~~~~~~~~~~~^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\torch\utils\data\dataloader.py", line 1443, in _get_data
+    success, data = self._try_get_data()
+                    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\torch\utils\data\dataloader.py", line 1297, in _try_get_data
+    raise RuntimeError(
+        f"DataLoader worker (pid(s) {pids_str}) exited unexpectedly"
+    ) from e
+RuntimeError: DataLoader worker (pid(s) 36720) exited unexpectedly

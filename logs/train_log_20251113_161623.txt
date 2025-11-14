@@ -1,0 +1,34 @@
+=== YOLOv11 訓練啟動於 20251113_161623 ===
+
+Traceback (most recent call last):
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\engine\trainer.py", line 649, in get_dataset
+    data = check_det_dataset(self.args.data)
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\data\utils.py", line 410, in check_det_dataset
+    data = YAML.load(file, append_filename=True)  # dictionary
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\utils\__init__.py", line 586, in load
+    assert str(file).endswith((".yaml", ".yml")), f"Not a YAML file: {file}"
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+AssertionError: Not a YAML file: docs\en\datasets\pose\coco8-pose.md
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\CiRou\Dev\ultralytics-main\Yolov11_1113\test_1113.py", line 43, in <module>
+    results = model.train(data=r"docs\en\datasets\pose\coco8-pose.md", epochs=100, imgsz=640,project="runs/pose",name="my_custom_train",device='cpu')
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\engine\model.py", line 773, in train
+    self.trainer = (trainer or self._smart_load("trainer"))(overrides=args, _callbacks=self.callbacks)
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\models\yolo\pose\train.py", line 55, in __init__
+    super().__init__(cfg, overrides, _callbacks)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\models\yolo\detect\train.py", line 63, in __init__
+    super().__init__(cfg, overrides, _callbacks)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\engine\trainer.py", line 163, in __init__
+    self.data = self.get_dataset()
+                ~~~~~~~~~~~~~~~~^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\models\yolo\pose\train.py", line 113, in get_dataset
+    data = super().get_dataset()
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\engine\trainer.py", line 653, in get_dataset
+    raise RuntimeError(emojis(f"Dataset '{clean_url(self.args.data)}' error ❌ {e}")) from e
+RuntimeError: Dataset 'docs/en/datasets/pose/coco8-pose.md' error  Not a YAML file: docs\en\datasets\pose\coco8-pose.md

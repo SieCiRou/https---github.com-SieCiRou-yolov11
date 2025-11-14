@@ -1,0 +1,66 @@
+=== YOLOv11 訓練啟動於 20251113_171521 ===
+
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    from multiprocessing.spawn import spawn_main; spawn_main(parent_pid=25824, pipe_handle=1892)
+                                                  ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\multiprocessing\spawn.py", line 122, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+  File "C:\Python313\Lib\multiprocessing\spawn.py", line 131, in _main
+    prepare(preparation_data)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\multiprocessing\spawn.py", line 246, in prepare
+    _fixup_main_from_path(data['init_main_from_path'])
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\multiprocessing\spawn.py", line 297, in _fixup_main_from_path
+    main_content = runpy.run_path(main_path,
+                                  run_name="__mp_main__")
+  File "<frozen runpy>", line 287, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "c:\Users\CiRou\Dev\ultralytics-main\Yolov11_1113\test_1113.py", line 47, in <module>
+    results = model.train(data="coco8-pose.yaml", epochs=100, imgsz=640,project="runs/pose",name="my_custom_train",device=-1)
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\engine\model.py", line 778, in train
+    self.trainer.train()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\engine\trainer.py", line 243, in train
+    self._do_train()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\engine\trainer.py", line 364, in _do_train
+    self._setup_train()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\engine\trainer.py", line 268, in _setup_train
+    self.model = self.model.to(self.device)
+                 ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\torch\nn\modules\module.py", line 1355, in to
+    return self._apply(convert)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\nn\tasks.py", line 281, in _apply
+    self = super()._apply(fn)
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\torch\nn\modules\module.py", line 915, in _apply
+    module._apply(fn)
+    ~~~~~~~~~~~~~^^^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\torch\nn\modules\module.py", line 915, in _apply
+    module._apply(fn)
+    ~~~~~~~~~~~~~^^^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\torch\nn\modules\module.py", line 915, in _apply
+    module._apply(fn)
+    ~~~~~~~~~~~~~^^^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\torch\nn\modules\module.py", line 942, in _apply
+    param_applied = fn(param)
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\torch\nn\modules\module.py", line 1341, in convert
+    return t.to(
+           ~~~~^
+        device,
+        ^^^^^^^
+        dtype if t.is_floating_point() or t.is_complex() else None,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        non_blocking,
+        ^^^^^^^^^^^^^
+    )
+    ^
+RuntimeError: CUDA error: CUDA-capable device(s) is/are busy or unavailable
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+

@@ -1,0 +1,163 @@
+=== YOLOv11 訓練啟動於 20251113_171514 ===
+
+=== YOLOv11 訓練啟動於 20251113_171514 ===
+
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    from multiprocessing.spawn import spawn_main; spawn_main(parent_pid=25824, pipe_handle=2984)
+                                                  ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\multiprocessing\spawn.py", line 122, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+  File "C:\Python313\Lib\multiprocessing\spawn.py", line 131, in _main
+    prepare(preparation_data)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\multiprocessing\spawn.py", line 246, in prepare
+    _fixup_main_from_path(data['init_main_from_path'])
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\multiprocessing\spawn.py", line 297, in _fixup_main_from_path
+    main_content = runpy.run_path(main_path,
+                                  run_name="__mp_main__")
+  File "<frozen runpy>", line 287, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "c:\Users\CiRou\Dev\ultralytics-main\Yolov11_1113\test_1113.py", line 47, in <module>
+    results = model.train(data="coco8-pose.yaml", epochs=100, imgsz=640,project="runs/pose",name="my_custom_train",device=-1)
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\engine\model.py", line 778, in train
+    self.trainer.train()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\engine\trainer.py", line 243, in train
+    self._do_train()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\engine\trainer.py", line 364, in _do_train
+    self._setup_train()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\engine\trainer.py", line 268, in _setup_train
+    self.model = self.model.to(self.device)
+                 ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\torch\nn\modules\module.py", line 1355, in to
+    return self._apply(convert)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\nn\tasks.py", line 281, in _apply
+    self = super()._apply(fn)
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\torch\nn\modules\module.py", line 915, in _apply
+    module._apply(fn)
+    ~~~~~~~~~~~~~^^^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\torch\nn\modules\module.py", line 915, in _apply
+    module._apply(fn)
+    ~~~~~~~~~~~~~^^^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\torch\nn\modules\module.py", line 915, in _apply
+    module._apply(fn)
+    ~~~~~~~~~~~~~^^^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\torch\nn\modules\module.py", line 942, in _apply
+    param_applied = fn(param)
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\torch\nn\modules\module.py", line 1341, in convert
+    return t.to(
+           ~~~~^
+        device,
+        ^^^^^^^
+        dtype if t.is_floating_point() or t.is_complex() else None,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        non_blocking,
+        ^^^^^^^^^^^^^
+    )
+    ^
+RuntimeError: CUDA error: CUDA-capable device(s) is/are busy or unavailable
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+[K[34m[1mtrain: [0mScanning C:\Users\CiRou\Downloads\ultralytics-main\datasets\coco8-pose\labels\train.cache... 4 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 4/4 4.4Kit/s 0.0s[K[34m[1mtrain: [0mScanning C:\Users\CiRou\Downloads\ultralytics-main\datasets\coco8-pose\labels\train.cache... 4 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 4/4 435.4it/s 0.0s
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    from multiprocessing.spawn import spawn_main; spawn_main(parent_pid=25824, pipe_handle=2120)
+                                                  ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\multiprocessing\spawn.py", line 122, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+  File "C:\Python313\Lib\multiprocessing\spawn.py", line 131, in _main
+    prepare(preparation_data)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\multiprocessing\spawn.py", line 246, in prepare
+    _fixup_main_from_path(data['init_main_from_path'])
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\multiprocessing\spawn.py", line 297, in _fixup_main_from_path
+    main_content = runpy.run_path(main_path,
+                                  run_name="__mp_main__")
+  File "<frozen runpy>", line 287, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "c:\Users\CiRou\Dev\ultralytics-main\Yolov11_1113\test_1113.py", line 47, in <module>
+    results = model.train(data="coco8-pose.yaml", epochs=100, imgsz=640,project="runs/pose",name="my_custom_train",device=-1)
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\engine\model.py", line 778, in train
+    self.trainer.train()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\engine\trainer.py", line 243, in train
+    self._do_train()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\engine\trainer.py", line 364, in _do_train
+    self._setup_train()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\engine\trainer.py", line 323, in _setup_train
+    self.train_loader = self.get_dataloader(
+                        ~~~~~~~~~~~~~~~~~~~^
+        self.data["train"], batch_size=batch_size, rank=LOCAL_RANK, mode="train"
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\models\yolo\detect\train.py", line 98, in get_dataloader
+    return build_dataloader(
+        dataset,
+    ...<4 lines>...
+        drop_last=self.args.compile and mode == "train",
+    )
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\data\build.py", line 325, in build_dataloader
+    return InfiniteDataLoader(
+        dataset=dataset,
+    ...<9 lines>...
+        drop_last=drop_last and len(dataset) % batch != 0,
+    )
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\ultralytics\data\build.py", line 67, in __init__
+    self.iterator = super().__iter__()
+                    ~~~~~~~~~~~~~~~~^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\torch\utils\data\dataloader.py", line 493, in __iter__
+    return self._get_iterator()
+           ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\torch\utils\data\dataloader.py", line 424, in _get_iterator
+    return _MultiProcessingDataLoaderIter(self)
+  File "C:\Users\CiRou\Dev\ultralytics-main\venv\Lib\site-packages\torch\utils\data\dataloader.py", line 1171, in __init__
+    w.start()
+    ~~~~~~~^^
+  File "C:\Python313\Lib\multiprocessing\process.py", line 121, in start
+    self._popen = self._Popen(self)
+                  ~~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\multiprocessing\context.py", line 224, in _Popen
+    return _default_context.get_context().Process._Popen(process_obj)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Python313\Lib\multiprocessing\context.py", line 337, in _Popen
+    return Popen(process_obj)
+  File "C:\Python313\Lib\multiprocessing\popen_spawn_win32.py", line 47, in __init__
+    prep_data = spawn.get_preparation_data(process_obj._name)
+  File "C:\Python313\Lib\multiprocessing\spawn.py", line 164, in get_preparation_data
+    _check_not_importing_main()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\multiprocessing\spawn.py", line 140, in _check_not_importing_main
+    raise RuntimeError('''
+    ...<16 lines>...
+    ''')
+RuntimeError: 
+        An attempt has been made to start a new process before the
+        current process has finished its bootstrapping phase.
+
+        This probably means that you are not using fork to start your
+        child processes and you have forgotten to use the proper idiom
+        in the main module:
+
+            if __name__ == '__main__':
+                freeze_support()
+                ...
+
+        The "freeze_support()" line can be omitted if the program
+        is not going to be frozen to produce an executable.
+
+        To fix this issue, refer to the "Safe importing of main module"
+        section in https://docs.python.org/3/library/multiprocessing.html
+        
