@@ -1,177 +1,244 @@
-# integrated_system.py - 穩健版：使用 OpenCV 內建 LBPH 臉部辨識 + YOLO 姿勢估計
-# 優勢：零編譯依賴，Windows 100% 成功！只需 pip install opencv-python ultralytics numpy
-# 臉部註冊：捕捉多張照片訓練 LBPH 模型（傳統但準確率高，適合小資料集）
-# 即時辨識：開啟相機，同時顯示臉部辨識（姓名）+ 姿勢關鍵點
-# 注意：首次運行會自動建立 known_faces 資料夾與模型檔案
+# final_gui_system.py
+# 2025 終極穩定版：Tkinter 美觀介面 + OpenCV LBPH 臉部辨識 + YOLOv11 姿勢估計
+# 安裝指令：pip install opencv-python ultralytics numpy pillow
 
 import os
 import cv2
 import numpy as np
 from ultralytics import YOLO
-import pickle  # 用來儲存訓練模型
+import pickle
+from PIL import Image, ImageTk
+import tkinter as tk
+from tkinter import ttk, messagebox, simpledialog
+import threading
+import time
 
-# 設定
+# ==================== 全域設定 ====================
 KNOWN_FACES_DIR = "known_faces"
-MODEL_FILE = "face_recognizer.pkl"
+MODEL_FILE = "face_recognizer.yml"   # OpenCV 標準格式
+LABELS_FILE = "labels.pkl"
 POSE_MODEL_PATH = "yolo11n-pose.pt"  # 或你的 best.pt
 
-# 初始化 YOLO 姿勢模型
+face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+recognizer = cv2.face.LBPHFaceRecognizer_create()
 pose_model = YOLO(POSE_MODEL_PATH)
 
-# 臉部偵測器 (Haar Cascade, OpenCV 內建)
-face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+known_names = {}  # {0: "CiRou", 1: "Mom", ...}
 
-# LBPH 臉部辨識器 (OpenCV 內建)
-recognizer = cv2.face.LBPHFaceRecognizer_create()
+# === UI Colors ===
+COLORS = {
+    "text": "#1E90FF",
+    "Unknown_face": (114, 128, 250),   # Salmon
+    "member_face": (237, 149, 100),   # Blue
+    "idle_face": (122, 150, 233),     # Gray
+}
 
-# 已知臉部資料：labels (姓名 ID) 和 face_images (訓練圖像)
-known_labels = []  # [0, 0, 1, 1, ...] 對應姓名 ID
-known_names = {}   # {0: "CiRou", 1: "老闆", ...}
-face_images = []   # 儲存灰階臉部圖像列表
-
+# ==================== 臉部模型載入 ====================
 def load_face_model():
-    """載入已訓練的臉部模型"""
-    global recognizer, known_labels, known_names, face_images
-    if os.path.exists(MODEL_FILE):
+    global known_names
+    if os.path.exists(MODEL_FILE) and os.path.exists(LABELS_FILE):
         recognizer.read(MODEL_FILE)
-        print("已載入現有臉部模型。")
-        
-        # 重新建構 known_names (從模型推斷)
-        try:
-            # 讀取對應的 labels.txt (我們會儲存)
-            with open("labels.txt", "rb") as f:
-                known_names = pickle.load(f)
-            print(f"已載入 {len(known_names)} 個已知臉部。")
-        except:
-            print("警告：無法載入 labels，僅使用模型預測。")
+        with open(LABELS_FILE, "rb") as f:
+            known_names = pickle.load(f)
+        print(f"已載入臉部模型，共 {len(known_names)} 人")
     else:
-        print("無現有模型，將在註冊後建立。")
+        print("無臉部模型，將從零開始")
 
-def register_face(name):
-    """註冊新臉部：捕捉 20 張照片訓練 LBPH"""
-    label_id = len(known_names)
-    known_names[label_id] = name
-    print(f"註冊 '{name}' (ID: {label_id})。請面向相機，捕捉 20 張照片，按 'q' 結束早。")
-    
-    cap = cv2.VideoCapture(0)
-    count = 0
-    while count < 20:
-        ret, frame = cap.read()
-        if not ret:
-            break
-        
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        faces = face_cascade.detectMultiScale(gray, 1.3, 5)
-        
-        for (x, y, w, h) in faces:
-            face_roi = gray[y:y+h, x:x+w]
-            face_roi = cv2.resize(face_roi, (100, 100))  # 標準化大小
-            face_images.append(face_roi)
-            known_labels.append(label_id)
-            count += 1
-            cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
-            cv2.putText(frame, f"捕捉 {count}/20", (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
-        
-        cv2.imshow(f"註冊 {name}", frame)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-    
-    cap.release()
-    cv2.destroyAllWindows()
-    
-    if count > 0:
-        # 訓練模型
-        recognizer.train(face_images, np.array(known_labels))
-        recognizer.save(MODEL_FILE)
-        with open("labels.txt", "wb") as f:
-            pickle.dump(known_names, f)
-        print(f"已訓練模型，總訓練樣本: {len(face_images)}")
-    else:
-        print("未捕捉到臉部，註冊失敗。")
-        del known_names[label_id]
-
-def recognize_faces(frame):
-    """在 frame 上辨識臉部，回傳畫好框的圖"""
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    faces = face_cascade.detectMultiScale(gray, 1.3, 5)
-    
-    for (x, y, w, h) in faces:
-        face_roi = gray[y:y+h, x:x+w]
-        face_roi = cv2.resize(face_roi, (100, 100))
-        
-        # 預測
-        label, confidence = recognizer.predict(face_roi)
-        name = "Unknown"
-        if label in known_names and confidence < 100:  # 閾值調整
-            name = known_names[label]
-        
-        # 畫框與名稱
-        color = (0, 255, 0) if name != "Unknown" else (0, 0, 255)
-        cv2.rectangle(frame, (x, y), (x+w, y+h), color, 2)
-        cv2.putText(frame, f"{name} ({confidence:.0f})", (x, y-10), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.9, color, 2)
-    
-    return frame
-
-def main():
-    # 載入模型
-    load_face_model()
-    
-    # 註冊互動
-    while True:
-        choice = input("是否註冊新臉部？(y/n): ").lower()
-        if choice == 'y':
-            name = input("輸入姓名: ")
-            register_face(name)
-        else:
-            break
-    
-    if len(known_names) == 0:
-        print("警告：無已知臉部，僅偵測不辨識。")
-    
-    # 開啟相機即時辨識
-    cap = cv2.VideoCapture(0)
-    if not cap.isOpened():
-        print("無法開啟相機。")
+# ==================== 註冊新臉部 ====================
+def register_new_face(name):
+    if name in known_names.values():
+        messagebox.showwarning("警告", f"{name} 已存在！")
         return
     
-    print("\n=== 開始即時姿勢 + 臉部辨識 ===")
-    print("按 'q' 結束。")
+    cap = cv2.VideoCapture(0)
+    faces = []
+    count = 0
+    max_samples = 30
     
-    while True:
+    messagebox.showinfo("開始註冊", f"請正對鏡頭，系統將捕捉 {max_samples} 張臉部照片\n按任意鍵繼續")
+    
+    while count < max_samples:
         ret, frame = cap.read()
-        if not ret:
-            break
+        if not ret: break
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        detected = face_cascade.detectMultiScale(gray, 1.3, 5)
         
-        # 臉部辨識
-        frame = recognize_faces(frame)
+        for (x, y, w, h) in detected:
+            if count >= max_samples: break
+            face_roi = gray[y:y+h, x:x+w]
+            face_roi = cv2.resize(face_roi, (150, 150))
+            faces.append(face_roi)
+            count += 1
+            cv2.rectangle(frame, (x,y), (x+w,y+h), (0,255,0), 3)
+            cv2.putText(frame, f"{count}/{max_samples}", (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), 2)
         
-        # YOLO 姿勢估計
-        results = pose_model.predict(source=frame, device='cpu', stream=False, verbose=False)
-        for result in results:
-            # 繪製關鍵點
-            if result.keypoints is not None:
-                keypoints = result.keypoints.xy[0].cpu().numpy()  # 第一個人
-                if len(keypoints) > 0:
-                    for x, y in keypoints:
-                        if x > 0 and y > 0:
-                            cv2.circle(frame, (int(x), int(y)), 5, (255, 0, 0), -1)
-            
-            # 繪製邊框
-            if result.boxes is not None:
-                for box in result.boxes.xyxy[0].cpu().numpy():
-                    x1, y1, x2, y2 = map(int, box)
-                    cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 255), 2)
-        
-        # 顯示
-        cv2.imshow("Real-time Pose Estimation + Face Recognition (OpenCV LBPH)", frame)
-        
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        cv2.imshow("註冊中 - 按 q 提早結束", frame)
+        if cv2.waitKey(1) == ord('q'):
             break
     
     cap.release()
     cv2.destroyAllWindows()
-    print("系統結束。")
+    
+    if len(faces) < 10:
+        messagebox.showerror("失敗", "捕捉臉部太少，註冊失敗")
+        return
+    
+    # 訓練或更新模型
+    if os.path.exists(MODEL_FILE):
+        recognizer.read(MODEL_FILE)
+        recognizer.update(faces, np.array([len(known_names)] * len(faces)))
+    else:
+        recognizer.train(faces, np.array([0] * len(faces)))
+    
+    known_names[len(known_names)] = name
+    recognizer.write(MODEL_FILE)
+    with open(LABELS_FILE, "wb") as f:
+        pickle.dump(known_names, f)
+    
+    messagebox.showinfo("成功", f"{name} 註冊成功！共收集 {len(faces)} 張照片")
 
+# ==================== 主 GUI 類別 ====================
+class FacePoseApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("YOLOv11 姿勢 + 臉部辨識系統 v2025")
+        self.root.geometry("1000x700")
+        self.root.configure(bg="#2c3e50")
+        
+        self.cap = None
+        self.running = False
+        
+        self.setup_ui()
+        load_face_model()
+    
+    def setup_ui(self):
+        # 標題
+        title = tk.Label(self.root, text="即時姿勢與臉部辨識系統", font=("微軟正黑體", 20, "bold"), 
+                        bg="#2c3e50", fg="#ecf0f1")
+        title.pack(pady=10)
+        
+        # 影片區
+        self.video_label = tk.Label(self.root, bg="black")
+        self.video_label.pack(pady=10)
+        
+        # 控制按鈕
+        btn_frame = tk.Frame(self.root, bg="#2c3e50")
+        btn_frame.pack(pady=10)
+        
+        tk.Button(btn_frame, text="開始辨識", command=self.start_camera, 
+                 font=("微軟正黑體", 14), bg="#27ae60", fg="white", width=12).pack(side=tk.LEFT, padx=10)
+        tk.Button(btn_frame, text="停止", command=self.stop_camera, 
+                 font=("微軟正黑體", 14), bg="#c0392b", fg="white", width=12).pack(side=tk.LEFT, padx=10)
+        tk.Button(btn_frame, text="註冊新臉部", command=self.register_gui, 
+                 font=("微軟正黑體", 14), bg="#2980b9", fg="white", width=15).pack(side=tk.LEFT, padx=10)
+        
+        # 狀態列
+        self.status = tk.StringVar(value="狀態：已就緒")
+        status_bar = tk.Label(self.root, textvariable=self.status, font=("微軟正黑體", 12),
+                             bg="#34495e", fg="#ecf0f1", relief=tk.SUNKEN, anchor=tk.W)
+        status_bar.pack(side=tk.BOTTOM, fill=tk.X)
+        
+        # 已註冊人員列表
+        list_frame = tk.LabelFrame(self.root, text="已註冊人員", font=("微軟正黑體", 12), bg="#2c3e50", fg="white")
+        list_frame.pack(pady=10, fill=tk.X, padx=20)
+        self.name_listbox = tk.Listbox(list_frame, height=6, font=("Consolas", 11))
+        self.name_listbox.pack(fill=tk.X, padx=10, pady=5)
+        self.update_name_list()
+    
+    def update_name_list(self):
+        self.name_listbox.delete(0, tk.END)
+        for name in known_names.values():
+            self.name_listbox.insert(tk.END, f" {name}")
+    
+    def register_gui(self):
+        name = simpledialog.askstring("註冊", "請輸入姓名：")
+        if name and name.strip():
+            threading.Thread(target=register_new_face, args=(name.strip(),), daemon=True).start()
+            self.root.after(1000, self.update_name_list)
+    
+    def start_camera(self):
+        if self.running:
+            return
+        self.cap = cv2.VideoCapture(0)
+        if not self.cap.isOpened():
+            messagebox.showerror("錯誤", "無法開啟相機！")
+            return
+        self.running = True
+        self.status.set("狀態：辨識中...")
+        threading.Thread(target=self.video_loop, daemon=True).start()
+    
+    def stop_camera(self):
+        self.running = False
+        if self.cap:
+            self.cap.release()
+        self.status.set("狀態：已停止")
+    
+    def video_loop(self):
+        while self.running:
+            ret, frame = self.cap.read()
+            if not ret:
+                continue
+            
+            # 臉部辨識
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+            
+            for (x, y, w, h) in faces:
+                roi = cv2.resize(gray[y:y+h, x:x+w], (150, 150))
+                if os.path.exists(MODEL_FILE):
+                    label, confidence = recognizer.predict(roi)
+                    name = known_names.get(label, "Unknown")
+                    if confidence < 80:
+                        text = name
+                        color = COLORS['member_face']
+                    else:
+                        text = "Unknown"
+                        color = COLORS['Unknown_face']
+                else:
+                    text = "未訓練"
+                    color = COLORS['idle_face']
+                
+                cv2.rectangle(frame, (x,y), (x+w,y+h), color, 2)
+                cv2.putText(frame, f"{text} ({confidence:.0f})", (x, y-10),
+                           cv2.FONT_HERSHEY_SIMPLEX, 0.9, color, 2)
+            
+            # YOLO 姿勢估計（已修好 numpy.float32 錯誤）
+            results = pose_model(frame, verbose=False, device='cpu')
+            for result in results:
+                if result.keypoints is not None and result.keypoints.xy is not None:
+                    kpts = result.keypoints.xy.cpu().numpy()
+                    # 修復：kpts 可能是 (n, 17, 2) 或 (17, 2) 或單一 float
+                    if kpts.ndim == 3:  # 多個人
+                        for person in kpts:
+                            for (x, y) in person:
+                                if x > 0 and y > 0:
+                                    cv2.circle(frame, (int(x), int(y)), 6, (255, 215, 0), -1)
+                    elif kpts.ndim == 2:  # 一個人
+                        for (x, y) in kpts:
+                            if x > 0 and y > 0:
+                                cv2.circle(frame, (int(x), int(y)), 6, (255, 215, 0), -1)
+            
+            # 轉成 Tkinter 可顯示格式
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            img = Image.fromarray(frame)
+            img = img.resize((860, 540), Image.Resampling.LANCZOS)
+            photo = ImageTk.PhotoImage(img)
+            
+            self.video_label.configure(image=photo)
+            self.video_label.image = photo  # 保持參考
+            
+            time.sleep(0.03)
+        
+        self.video_label.configure(image='')
+    
+    def on_closing(self):
+        if messagebox.askokcancel("退出", "確定要關閉程式嗎？"):
+            self.stop_camera()
+            self.root.destroy()
+
+# ==================== 程式進入點 ====================
 if __name__ == "__main__":
-    main()
+    root = tk.Tk()
+    app = FacePoseApp(root)
+    root.protocol("WM_DELETE_WINDOW", app.on_closing)
+    root.mainloop()
