@@ -1,10 +1,11 @@
-import os
-import numpy as np
-import sys
 import datetime
-import onnx
-from ultralytics import YOLO
+import os
+import sys
+
 import clearml
+
+from ultralytics import YOLO
+
 
 def main():
     clearml.browser_login()
@@ -17,9 +18,8 @@ def main():
 
     export_path = r"C:\Users\CiRou\Dev\ultralytics-main\Yolov11_1113"
     my_image_folder = r"C:\Users\CiRou\Dev\ultralytics-main\Yolov11_1113\yolo_train_img"
-    trained_model_path = r"yolo11n-pose.pt"
 
-    class Logger(object):
+    class Logger:
         def __init__(self, filename):
             self.terminal = sys.stdout
             self.log = open(filename, "a", encoding="utf-8")
@@ -48,7 +48,7 @@ def main():
         imgsz=640,
         project="runs/pose",
         name="my_custom_train",
-        device=0  # 改用 GPU
+        device=0,  # 改用 GPU
     )
 
     # 驗證模型
@@ -60,7 +60,7 @@ def main():
     # 預測
     results = model.predict(source=my_image_folder, save=True, device=0)
     for i, result in enumerate(results):
-        print(f"--- 處理圖片 {i+1} ---")
+        print(f"--- 處理圖片 {i + 1} ---")
         result.save()
 
     # 匯出模型
@@ -68,7 +68,9 @@ def main():
     print(f"\n模型已匯出：{export_path}")
     print(f"\n日誌已保存於：{log_file}")
 
+
 if __name__ == "__main__":
     import multiprocessing
+
     multiprocessing.freeze_support()  # ✅ 關鍵修正（for Windows）
     main()
